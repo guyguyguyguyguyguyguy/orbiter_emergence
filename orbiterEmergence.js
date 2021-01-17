@@ -39,7 +39,6 @@ function setup() {
   }
 
   noStroke();
-  fill(255, 100, 0);
 }
 
 
@@ -170,6 +169,7 @@ class Orbiter {
     this.radius = radin;
     this.angle = 0;
     this.speed = PI / 40;
+    this.history = [];
   }
 
   //move orbiter along the circumfrance
@@ -182,6 +182,13 @@ class Orbiter {
     this.y = this.centreY + sin(this.angle) * this.radius;
 
     this.angle += this.speed;
+    
+    let v = createVector(this.x, this.y);
+    this.history.push(v);
+    
+    if (this.history.length > 50) {
+      this.history.splice(0, 1);   
+    }
   }
 
 
@@ -207,6 +214,16 @@ class Orbiter {
 
   //display orbiter to the http, display the tail of the orbiter and the orbiter itself
   display() {
+    for (let i = 0; i < this.history.length; i++) {
+      let pos = this.history[i];      
+      let j = (i == 0 ? 1 : i);
+      let trailColour = color(255, 0, 0);
+      trailColour.setAlpha(j*10);
+      fill(trailColour);
+      ellipse(pos.x, pos.y, 10, 10)
+    }    
+    
+    fill(255, 0, 0);
     ellipse(this.x, this.y, 10, 10);
   }
 }
