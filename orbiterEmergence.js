@@ -12,8 +12,16 @@ let mx, my; // mouse coords;
 
 
 const controls = {
-  view: {x: 0, y: 0, zoom: 1},
-  viewPos: { prevX: null,  prevY: null,  isDragging: false },
+  view: {
+    x: 0,
+    y: 0,
+    zoom: 1
+  },
+  viewPos: {
+    prevX: null,
+    prevY: null,
+    isDragging: false
+  },
 }
 
 
@@ -36,11 +44,21 @@ function setup() {
 
 
 function draw() {
-  
+
   background(0);
   translate(controls.view.x, controls.view.y);
   scale(controls.view.zoom);
-  
+
+  if (keyIsDown(UP_ARROW)) {
+    controls.view.y += 10;
+  } else if (keyIsDown(DOWN_ARROW)) {
+    controls.view.y -= 10;
+  } else if (keyIsDown(LEFT_ARROW)) {
+    controls.view.x += 10;
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    controls.view.x -= 10;
+  }
+
   orbiters.forEach(orbiter => {
     orbiter.collide();
     orbiter.move();
@@ -53,7 +71,7 @@ function draw() {
 window.mousePressed = e => Controls.move(controls).mousePressed(e);
 window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
 window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
-window.keyPressed = e => Controls.move(controls).keyPressed(e);
+// window.keyPressed = e => Controls.move(controls).keyPressed(e);
 
 class Controls {
   static move(controls) {
@@ -64,14 +82,21 @@ class Controls {
     }
 
     function mouseDragged(e) {
-      const {prevX, prevY, isDragging} = controls.viewPos;
-      if(!isDragging) return;
+      const {
+        prevX,
+        prevY,
+        isDragging
+      } = controls.viewPos;
+      if (!isDragging) return;
 
-      const pos = {x: e.clientX, y: e.clientY};
+      const pos = {
+        x: e.clientX,
+        y: e.clientY
+      };
       const dx = pos.x - prevX;
       const dy = pos.y - prevY;
 
-      if(prevX || prevY) {
+      if (prevX || prevY) {
         controls.view.x += dx;
         controls.view.y += dy;
         controls.viewPos.prevX = pos.x, controls.viewPos.prevY = pos.y
@@ -84,40 +109,50 @@ class Controls {
       controls.viewPos.prevY = null;
     }
 
-    function keyPressed(e) {
-      if (keyCode == UP_ARROW) {
-        controls.view.y += 20;
-      } else if (keyCode == DOWN_ARROW) {
-        controls.view.y -= 20;
-      }
-    }
- 
+    // function keyPressed(e) {
+    //   if (keyIsDown(UP_ARROW)) {
+    //     controls.view.y += 20;
+    //   } else if (keyIsDown(DOWN_ARROW)) {
+    //     controls.view.y -= 20;
+    //   } else if (keyIsDown(LEFT_ARROW)) {
+    //     controls.view.x += 20;
+    //   } else if (keyIsDown(RIGHT_ARROW)) {
+    //     controls.view.x -= 20;
+    //   }
+    // }
+
     return {
-      mousePressed, 
-      mouseDragged, 
-      mouseReleased,
-      keyPressed
+      mousePressed,
+      mouseDragged,
+      mouseReleased
+      // keyPressed
     }
   }
 
   static zoom(controls) {
     function worldZoom(e) {
-      const {x, y, deltaY} = e;
+      const {
+        x,
+        y,
+        deltaY
+      } = e;
       const direction = deltaY > 0 ? -1 : 1;
       const factor = 0.05;
       const zoom = 1 * direction * factor;
 
 
-      
-      const wx = (x-controls.view.x)/(width*controls.view.zoom);
-      const wy = (y-controls.view.y)/(height*controls.view.zoom);
-      
-      controls.view.x -= wx*width*zoom;
-      controls.view.y -= wy*height*zoom;
+
+      const wx = (x - controls.view.x) / (width * controls.view.zoom);
+      const wy = (y - controls.view.y) / (height * controls.view.zoom);
+
+      controls.view.x -= wx * width * zoom;
+      controls.view.y -= wy * height * zoom;
       controls.view.zoom += zoom;
     }
 
-    return {worldZoom}
+    return {
+      worldZoom
+    }
   }
 }
 
@@ -175,4 +210,3 @@ class Orbiter {
     ellipse(this.x, this.y, 10, 10);
   }
 }
-
