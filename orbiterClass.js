@@ -1,4 +1,11 @@
 
+function randomCol() {
+  let a  = random(0, 255);
+  let b = random(0, 255);
+  let c = random(0, 255);
+
+  return [a, b, c];
+}
 
 class Orbiter {
   constructor(xin, yin, idin, radin) {
@@ -12,12 +19,14 @@ class Orbiter {
     this.radius = radin;
     this.angle = 0;
     //need the right speed such that larger orbiters are a lot faster than smaller, but such that smaller orbiters cannot skip through large orbiters
-    this.speed = (PI * radin)/ 100000;
+    this.speed = (PI * radin)/ 10000;
     this.vx = cos(this.speed) * this.radius;
     this.vy = sin(this.speed) * this.radius;
     this.history = [];
 
-    this.mass = radin*radin*radin;
+    this.mass = radin*radin*radin * radin;
+
+    this.col = randomCol();
   }
 
   //move orbiter along the circumfrance
@@ -31,7 +40,7 @@ class Orbiter {
     let v = createVector(this.x, this.y);
     this.history.push(v);
 
-    if (this.history.length > this.radius) {
+    if (this.history.length > 20) {
       this.history.splice(0, 1);
     }
   }
@@ -42,30 +51,27 @@ class Orbiter {
   }
 
 
-  //possibly be a recurrent function?
-  //this needs to be damped (last x frames after collision)
-  collide() {
+  //This has a bug, sometime works, sometimes the orbiters fly in the opposite directions, why? I DONT KNOW
+  elasticCollide() {
     for (let i = this.id + 1; i < orbiters.length; ++i) {
-      let dx = orbiters[i].x - this.x;
-      let dy = orbiters[i].y - this.y;
-      let distanceSqd = dx * dx + dy * dy;
-      if (distanceSqd < MINDIST) {
-        let xVel = orbiters[i].vx - this.vx;
-        let yVel = orbiters[i].vy - this.vy;
-        let dotProd = dx * xVel + dy * yVel;
-        if(dotProd > 0) {
-          let colScale = dotProd / distanceSqd;
-          let xCol = dx * colScale;
-          let yCol = dy * colScale;
-          
-          let combinedMass = this.mass + orbiters[i].mass;
-          let colWeightA = 2 * orbiters[i].mass / combinedMass;
-          let colWeightB = 2 * this.mass / combinedMass;
-          this.cvx += colWeightA * dx / 100;
-          this.cvy += colWeightA * dy / 100;
-          orbiters[i].cvx -= colWeightB * dx / 100;
-          orbiters[i].cvy -= colWeightB * dy / 100;
-        }
+      let dx = this.x - orbiters[i].x;
+      let dy = this.y - orbiters[i].y;
+      let distance = sqrt(dx * dx + dy *dy);
+      
+      if (distance < MINDIST) {
+        let dvx = (this.vx + this.cvx) - (orbiters[i].vx + orbiters[i].cvx);
+        let dvy = (this.vy + this.cvy) - (orbiters[i].vy + orbiters[i].cvy);
+        let combMass = this.mass + orbiters[i].mass;
+        let dot = dvx * dx + dvy * dy;
+        let colScaled = dot / (distance *distance)
+        let oMass = ((2*this.mass)/combMass);
+        let tMass = ((2*orbiters[i].mass)/combMass)
+        
+        //bit funky as dvx/dvy is sum of veloctiies but collision only effects cvx/cvy, is this right??
+        this.cvx = this.cvx - tMass * colScaled * -dx;
+        this.cvy  = this.cvy - tMass * colScaled * -dy;
+        orbiters[i].cvx = orbiters[i].cvx - oMass * colScaled * dx;
+        orbiters[i].cvy = orbiters[i].cvy - oMass * colScaled * dy;
       }
     }
   }
@@ -77,14 +83,15 @@ class Orbiter {
       let j = (i == 0 ? 1 : i);
 
       //want colour to be based on raius
-      let trailColour = color(255, 0, 0);
+      let trailColour = color(this.col[0], this.col[1], this.col[2]);
       trailColour.setAlpha(j * 10);
       fill(trailColour);
       ellipse(pos.x, pos.y, 10, 10)
     }
 
     //want colour to be based on raius
-    fill(255, 0, 0);
+    //fill(255, 0, 0);
+    fill(this.col[0], this.col[1], this.col[2]);
     ellipse(this.x, this.y, 10, 10);
   }
 }
