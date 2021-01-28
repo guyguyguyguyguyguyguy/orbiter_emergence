@@ -1,0 +1,53 @@
+html,
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+/* p.counter {
+  display: inline;
+  position: absolute;
+  left: 40.5%;
+  font-weight: bold;
+  font-size: 26px;
+  padding-bottom: 50px;
+} */
+
+h2.counter {
+  text-align: center;
+}
+
+div.counter {
+  display: inline-block;
+  width: 100%;
+}
+
+.no_orbiters {
+  display: inline-block;
+  position: absolute;
+  width: 350px;
+  height: 100px;
+  left: 60px;
+  padding-top: 25px;
+}
+
+.clear_canvas {
+  display: inline-block;
+  position: absolute;
+  right: 60px;
+}
+
+br {
+  display: block;
+  margin: 1px 0;
+}
+
+h2.title {
+  text-align: center;
+} 
+

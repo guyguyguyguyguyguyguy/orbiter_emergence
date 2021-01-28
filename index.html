@@ -1,27 +1,58 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="#">  
-  <title>emergent orbiters</title>
-  <style>
-    body {
-      padding: 0;
-      margin: 0;
-    }
-  </style>
+  <head>
   <script src="../p5.min.js"></script>
-  <script src="../addons/p5.sound.min.js"></script>
   <script src="runOrbiters.js"></script>
   <script src="orbiterClass.js"></script>
   <script src="controlsClass.js"></script>
-</head>
+    <script async>
+      /* let orbiterNo; */
+      function noOrbiters() {
+        numOrbiters = document.getElementById("number").value;
+        document.getElementById("noOrbi").innerHTML = ("Number of orbiters: " + numOrbiters);
+        initOrbiters();
+      }
+      
+      function clearCanvas() {
+      	orbiters = [];
+        numOrbiters = 0;
+        document.getElementById("noOrbi").innerHTML = ("Number of orbiters: " + numOrbiters);
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
 
-<body>
-  <main>
-  </main>
-</body>
+  </head>
+
+  <body>
+    
+    <form class="no_orbiters">
+      <div class="control-group">
+        <span class="control-label"></span>
+        <div class="controls form-inline">
+          <label for="number">Enter number of orbiters:</label><br><br>
+          <input type="text" id="number" name="number" placeholder="0">
+          <input type="button" onclick="noOrbiters()" value="Submit">
+        </div>
+      </div>
+    </form>
+    
+    
+    <h2 class="title">Emergence with orbiters </h2>
+    
+    
+    <div class="counter">    
+      <h2 class="counter" id="noOrbi">Number of orbiters: 0</h2>
+    </div>
+    
+    
+    <div class="clear_canvas">
+      <button type="button" onclick="clearCanvas()">Clear</button>
+    </div>
+
+  </body>
 
 </html>
+

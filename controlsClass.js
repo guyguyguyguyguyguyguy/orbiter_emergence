@@ -32,15 +32,20 @@ class Controls {
 
     function mouseReleased(e) {
       //needs to be improved
+      //need to scale mouse pos based on zoom and arrow movement
       let x = mouseX;
       let y = mouseY;
-      orbiters.push(new Orbiter(
-        x,
-        y,
-        IDCOUNT,
-        random(10, 100)
-      ));
-      ++IDCOUNT;
+      if (y > 0) {
+        orbiters.push(new Orbiter(
+          x,
+          y,
+          IDCOUNT,
+          log(1 - random()) / (-gamma)
+        ));
+        ++IDCOUNT;
+        ++numOrbiters;
+        document.getElementById("noOrbi").innerHTML = ("Number of orbiters: " + numOrbiters);
+      }
 
       controls.viewPos.isDragging = false;
       controls.viewPos.prevX = null;

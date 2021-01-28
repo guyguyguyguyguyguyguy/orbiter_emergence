@@ -1,16 +1,26 @@
-
 let input, sbutton, cbutton, numOrbiters, msg;
 let orbiters = [];
 //set as 12 as each point has a radius of 5
-let MINDIST = 12;
-let spring = 0.05;
+const MINDIST = 10;
 let IDCOUNT = 0;
+const minRad = 30;
+const maxRad = 300;
+//1/gamma gives the mean of the exponential distribution; in this case 100
+const gamma = 0.01;
+let canvas;
 
 //for zooming
 let sf = 1; // scaleFactor
 let x = 0; // pan X
 let y = 0; // pan Y
 let mx, my; // mouse coords;
+
+
+function fact(x) {
+  if (x < 0) return;
+  if (x === 0) return 1;
+  return x * fact(x - 1);
+}
 
 
 function randomCol() {
@@ -23,13 +33,13 @@ function randomCol() {
 
 
 function initOrbiters() {
-  numOrbiters = input.value();
-  for (let i = 0; i < input.value(); ++i) {
+  //numOrbiters = input.value();
+  for (let i = 0; i < numOrbiters; ++i) {
     orbiters[i] = new Orbiter(
       random(width),
       random(height),
       IDCOUNT,
-      random(10, 50)
+      log(1 - random()) / (-gamma)
     );
     ++IDCOUNT;
   }
@@ -51,23 +61,10 @@ const controls = {
 
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight - 100);
-  canvas.position(0, 100)
+  canvas.position(0, 150)
   canvas.mouseWheel(e => Controls.zoom(controls).worldZoom(e))
 
-  input = createInput();
-  input.position(windowWidth / 2, 30);
-  
-  sbutton = createButton('submit');
-  sbutton.position(input.x + input.width, input.y);
-  sbutton.mousePressed(initOrbiters);
-  
-  sbutton = createButton('clear canvas');
-  sbutton.position(input.x + input.width + 100, input.y);
-  sbutton.mousePressed(clearCanvas = () => {orbiters = []; input.value('')});
-  
-  msg = createElement('h5', "How many orbiters to initalise?");
-  msg.position(input.x, input.y - 46);
-
+  numOrbiters = 0;
   noStroke();
 }
 
@@ -91,9 +88,10 @@ function draw() {
     orbiter.move();
     orbiter.display();
     orbiter.elasticCollide();
+    //orbiter.testColide();
     orbiter.moveCollision();
   });
-  
+
 }
 
 
