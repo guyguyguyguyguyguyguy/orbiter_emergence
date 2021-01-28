@@ -1,3 +1,4 @@
+//test comment
 let input, sbutton, cbutton, numOrbiters, msg;
 let orbiters = [];
 //set as 12 as each point has a radius of 5
